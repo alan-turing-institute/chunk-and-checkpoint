@@ -1,4 +1,4 @@
-name: Check code with pre-commit 
+name: Check code with pre-commit
 
 on:
   push:
