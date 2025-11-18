@@ -5,7 +5,14 @@
 ## Installation
 
 ```bash
-pip install chunkchunk
+pip install chunkcheck
 ```
 
 ## Documentation
+
+TBD.
+
+## Development
+
+```bash
+```
