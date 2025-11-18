@@ -2,8 +2,9 @@
 name = "chunkcheck"
 description = "Chunk and checkpoint memory optimisation"
 readme = "README.md"
+license = "MIT"
 version = "0.1.0"
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 dependencies = []
 
 [dependency-groups]
@@ -11,7 +12,6 @@ dev = [
     "pre-commit>=4.2.0",
     "pytest>=8.3.5",
     "pytest-cov>=6.1.1",
-    "jupyter-book==1.0.4",
 ]
 
 [tool.ruff]
