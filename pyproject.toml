@@ -48,4 +48,5 @@ allow-star-arg-any = true
     "S101", # Allow asserts in tests.
     "INP001", # Allow implicit namespaces in tests.
     "ARG001", # Allow unused function arguments for fixtures in tests.
+    "D100", # Allow public modules without docstrings.
 ]
