@@ -51,3 +51,7 @@ allow-star-arg-any = true
     "ARG001", # Allow unused function arguments for fixtures in tests.
     "D100", # Allow public modules without docstrings.
 ]
+
+[build-system]
+requires = ["uv_build>=0.9.10,<0.10.0"]
+build-backend = "uv_build"
