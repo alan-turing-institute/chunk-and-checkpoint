@@ -3,12 +3,13 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  push:
+  workflow_dispatch:
 
 jobs:
   publish:
     name: Publish to PyPI
     runs-on: ubuntu-latest
+    environment: publish
 
     steps:
       - uses: actions/checkout@v4
