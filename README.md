@@ -1,5 +1,7 @@
 # Chunk and Checkpoint Memory Optimisation
 
+[![CI](https://github.com/alan-turing-institute/chunk-and-checkpoint/actions/workflows/ci.yml/badge.svg)](https://github.com/alan-turing-institute/chunk-and-checkpoint/actions/workflows/ci.yml)
+
 ## What is this?
 
 ## Installation
