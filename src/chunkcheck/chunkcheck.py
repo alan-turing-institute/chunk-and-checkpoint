@@ -5,7 +5,7 @@ from torch.utils.checkpoint import checkpoint
 
 
 def chunk_and_checkpoint(
-    f: Callable, *xs: torch.Tensor, chunk_size: int, batch_axis: int = 0
+    f: Callable, *xs: torch.Tensor, chunk_size: int, batch_dim: int = 0
 ) -> torch.Tensor:
     """Compute `f(*xs)` in a memory-efficient manner.
 
@@ -34,14 +34,14 @@ def chunk_and_checkpoint(
 
     # Check that the requested axis is available in all tensors.
     for x in xs:
-        if len(x.shape) <= batch_axis:
+        if len(x.shape) <= batch_dim:
             msg = "Not all tensors have requested batch axis."
             raise ValueError(msg)
 
     # Verify that xs have the same length along the batch axis.
-    batch_dim_len = xs[0].shape[batch_axis]
+    batch_dim_len = xs[0].shape[batch_dim]
     for x in xs[1:]:
-        if x.shape[batch_axis] != batch_dim_len:
+        if x.shape[batch_dim] != batch_dim_len:
             msg = "All arguments must have the same batch dim length."
             raise ValueError(msg)
 
@@ -50,9 +50,9 @@ def chunk_and_checkpoint(
     n = 0
     while n < batch_dim_len:
         length = min(batch_dim_len - n, chunk_size)
-        xs_chunks = [torch.narrow(x, batch_axis, n, length) for x in xs]
+        xs_chunks = [torch.narrow(x, batch_dim, n, length) for x in xs]
         results.append(checkpoint(f, *xs_chunks, use_reentrant=False))
         n = n + chunk_size
 
     # Concatenate the results and return them.
-    return torch.concatenate(results, axis=batch_axis)
+    return torch.concatenate(results, axis=batch_dim)

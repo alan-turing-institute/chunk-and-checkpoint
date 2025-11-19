@@ -32,7 +32,7 @@ def test_tensor_value_error() -> None:
     ):
         chunk_and_checkpoint(lambda x: x, x, y, chunk_size=1)
     with pytest.raises(ValueError, match=r"Not all tensors have requested batch axis."):
-        chunk_and_checkpoint(lambda x: x, x, chunk_size=1, batch_axis=2)
+        chunk_and_checkpoint(lambda x: x, x, chunk_size=1, batch_dim=2)
 
 
 @pytest.mark.parametrize("chunk_size", [1, 2, 3, 4])
@@ -54,7 +54,7 @@ def test_checkpoint_correctness(chunk_size: int, axis: int) -> None:
     mlp.zero_grad()
 
     # Compute value and gradients with operation reordering and checkpointing.
-    y = chunk_and_checkpoint(mlp, x, chunk_size=chunk_size, batch_axis=axis).sum()
+    y = chunk_and_checkpoint(mlp, x, chunk_size=chunk_size, batch_dim=axis).sum()
     y.backward()
     y_fuse = y.detach().clone()
     grads_fuse = [p.grad.detach().clone() for p in mlp.parameters()]
