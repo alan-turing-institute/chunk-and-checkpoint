@@ -3,9 +3,11 @@ name = "chunkcheck"
 description = "Chunk and checkpoint memory optimisation"
 readme = "README.md"
 license = "MIT"
-version = "0.1.0"
+version = "0.1.1"
 requires-python = ">=3.9"
-dependencies = []
+dependencies = [
+    "torch>=1.12",
+]
 
 [dependency-groups]
 dev = [
@@ -22,6 +24,9 @@ line-length = 88
 select = ["ALL"]
 ignore = [
     "COM812", # Conflicts with formatter
+    "D100", # Allow public modules without docstrings.
+    "D102", # Allow public methods without docstrings.
+    "D103", # Allow public functions without docstrings.
     "D105", # Allow magic methods without docstrings.
     "D107", # Allow `__init__` functions without docstrings.
     "D203", # one-blank-line-before-class (conflicts with D211)

@@ -1,3 +1,5 @@
 """Chunk and checkpoint memory optimisation."""
 
-something = 1
+from .chunkcheck import chunk_and_checkpoint
+
+__all__ = ["chunk_and_checkpoint"]
