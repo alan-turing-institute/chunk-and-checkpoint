@@ -2,8 +2,7 @@
 
 [![CI](https://github.com/alan-turing-institute/chunk-and-checkpoint/actions/workflows/ci.yml/badge.svg)](https://github.com/alan-turing-institute/chunk-and-checkpoint/actions/workflows/ci.yml)
 
-
-One-line description here
+Reduce peak memory when training models in PyTorch which require batched operations internally, such as Swin Transformers.
 
 TLDR:
 
@@ -13,7 +12,8 @@ from chunkcheck import chunk_and_checkpoint
 ...
 
 # There is a really large batch size along dimension 0. `chunk_and_checkpoint`
-# substantially reduces peak memory usage. 
+# substantially reduces peak memory usage. Adjust `chunk_size` to achieve your
+# preferred time vs memory tradeoff.
 y = chunk_and_checkpoint(f, x1, x2, ..., chunk_size=4, batch_axis=0)
 
 ...
