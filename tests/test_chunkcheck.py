@@ -1,7 +1,6 @@
 import pytest
 import torch
 from torch import nn
-from torch.utils.checkpoint import checkpoint
 
 from chunkcheck import chunk_and_checkpoint
 
@@ -49,18 +48,6 @@ def test_checkpoint_correctness() -> None:
     y_orig = y.detach().clone()
     grads_orig = [p.grad.detach().clone() for p in mlp.parameters()]
     mlp.zero_grad()
-
-    # Compute value and gradients with vanilla checkpointing. We should not
-    # need to do this, because it is built-in PyTorch behaviour, but I would
-    # like to be 100% certain that I trust the operations.
-    y = checkpoint(mlp, x, use_reentrant=False).sum()
-    y.backward()
-    y_ckpt = y.detach().clone()
-    grads_ckpt = [p.grad.detach().clone() for p in mlp.parameters()]
-    mlp.zero_grad()
-    assert torch.isclose(y_orig, y_ckpt)
-    for g_orig, g_ckpt in zip(grads_orig, grads_ckpt):
-        assert torch.all(torch.isclose(g_orig, g_ckpt))
 
     # Compute value and gradients with operation reordering and checkpointing.
     for chunk_size in [1, 2, 3, 4]:
