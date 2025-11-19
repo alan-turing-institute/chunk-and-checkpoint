@@ -1,10 +1,14 @@
+from typing import Callable  # noqa: D100
+
 import torch
 from torch.utils.checkpoint import checkpoint
 
 
-def chunk_and_checkpoint(f, *xs, chunk_size: int, batch_axis=0):
+def chunk_and_checkpoint(
+    f: Callable, *xs: torch.Tensor, chunk_size: int, batch_axis: int = 0
+) -> torch.Tensor:
     """Compute f(*xs) in a memory-efficient manner.
-    
+
     `chunk_size` controls the time-memory tradeoff. Typically, you want to set
     `chunk_size` just large enough so that this function takes very little more
     time to run than `torch.utils.checkpoint`. To find a good value for
@@ -14,28 +18,32 @@ def chunk_and_checkpoint(f, *xs, chunk_size: int, batch_axis=0):
         f: a callable
         xs: a collection of `torch.Tensor`s
         chunk_size: the number of chunks to divide each element of `xs` into.
-        batch_axis: the axis of each element of `xs` along which to divide. 
-    """
+        batch_axis: the axis of each element of `xs` along which to divide.
 
+    """
     # Check that there is at least one positional argument.
     if len(xs) == 0:
-        raise ValueError("At least one position argument required.")
+        msg = "At least one position argument required."
+        raise ValueError(msg)
 
     # Verify that xs are all tensors.
     for x in xs:
-        if type(x) != torch.Tensor:
-            raise ValueError("Arguments must be torch Tensors.")
+        if x is not torch.Tensor:
+            msg = "Arguments must be torch Tensors."
+            raise ValueError(msg)
 
     # Check that the requested axis is available in all tensors.
     for x in xs:
         if len(x.shape) <= batch_axis:
-            raise ValueError("Not all tensors have requested batch axis.")
+            msg = "Not all tensors have requested batch axis."
+            raise ValueError(msg)
 
     # Verify that xs have the same length along the batch axis.
     batch_dim_len = xs[0].shape[batch_axis]
     for x in xs[1:]:
         if x.shape[batch_axis] != batch_dim_len:
-            raise ValueError("All arguments must have the same batch dim length.")
+            msg = "All arguments must have the same batch dim length."
+            raise ValueError(msg)
 
     # Perform checkpointed computation.
     results = []

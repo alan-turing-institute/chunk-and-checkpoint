@@ -33,7 +33,6 @@ def test_tensor_value_error():
 
 
 def test_checkpoint_correctness():
-
     # Set up MLP and argument.
     B = 4
     N = 7
@@ -58,7 +57,7 @@ def test_checkpoint_correctness():
     grads_ckpt = [p.grad.detach().clone() for p in mlp.parameters()]
     mlp.zero_grad()
     assert torch.isclose(y_orig, y_ckpt)
-    for (g_orig, g_ckpt) in zip(grads_orig, grads_ckpt):
+    for g_orig, g_ckpt in zip(grads_orig, grads_ckpt):
         assert torch.all(torch.isclose(g_orig, g_ckpt))
 
     # Compute value and gradients with operation reordering and checkpointing.
@@ -72,5 +71,5 @@ def test_checkpoint_correctness():
             grads_fuse = [p.grad.detach().clone() for p in mlp.parameters()]
             mlp.zero_grad()
             assert torch.isclose(y_orig, y_fuse)
-            for (g_orig, g_fuse) in zip(grads_orig, grads_fuse):
+            for g_orig, g_fuse in zip(grads_orig, grads_fuse):
                 assert torch.all(torch.isclose(g_orig, g_fuse))
