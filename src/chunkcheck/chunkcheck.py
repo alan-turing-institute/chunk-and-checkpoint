@@ -29,7 +29,7 @@ def chunk_and_checkpoint(
     # Verify that xs are all tensors.
     for x in xs:
         if not isinstance(x, torch.Tensor):
-            msg = "Arguments must be torch Tensors."
+            msg = "Arguments must be `torch.Tensor`s."
             raise TypeError(msg)
 
     # Check that the requested axis is available in all tensors.

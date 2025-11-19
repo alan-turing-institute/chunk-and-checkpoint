@@ -23,13 +23,13 @@ class MLP(torch.nn.Module):
 def test_tensor_value_error() -> None:
     x = torch.randn(5, 4)
     y = torch.randn(4, 4)
-    with pytest.raises(ValueError, match="At least one positional"):
+    with pytest.raises(ValueError, match="At least one positional argument required."):
         chunk_and_checkpoint(lambda x: x, chunk_size=1)
-    with pytest.raises(TypeError, match="Arguments must be torch"):
+    with pytest.raises(TypeError, match="Arguments must be `torch.Tensor`s."):
         chunk_and_checkpoint(lambda x, y: x + y, [], y, chunk_size=1)
-    with pytest.raises(ValueError, match="same batch dim length"):
+    with pytest.raises(ValueError, match="All arguments must have the same batch dim length."):
         chunk_and_checkpoint(lambda x: x, x, y, chunk_size=1)
-    with pytest.raises(ValueError, match="requested batch axis"):
+    with pytest.raises(ValueError, match="Not all tensors have requested batch axis."):
         chunk_and_checkpoint(lambda x: x, x, chunk_size=1, batch_axis=2)
 
 
