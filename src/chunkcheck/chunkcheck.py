@@ -7,7 +7,7 @@ from torch.utils.checkpoint import checkpoint
 def chunk_and_checkpoint(
     f: Callable, *xs: torch.Tensor, chunk_size: int, batch_axis: int = 0
 ) -> torch.Tensor:
-    """Compute f(*xs) in a memory-efficient manner.
+    """Compute `f(*xs)` in a memory-efficient manner.
 
     `chunk_size` controls the time-memory tradeoff. Typically, you want to set
     `chunk_size` just large enough so that this function takes very little more
@@ -15,10 +15,10 @@ def chunk_and_checkpoint(
     `chunk_size`, time this function for a few sizes for your use case.
 
     Args:
-        f: a callable
-        xs: a collection of `torch.Tensor`s
-        chunk_size: the number of chunks to divide each element of `xs` into.
-        batch_axis: the axis of each element of `xs` along which to divide.
+        f: A callable.
+        xs: A collection of `torch.Tensor`s.
+        chunk_size: The number of chunks to divide each element of `xs` into.
+        batch_axis: The axis of each element of `xs` along which to divide.
 
     """
     # Check that there is at least one positional argument.

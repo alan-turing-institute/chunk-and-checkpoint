@@ -33,7 +33,9 @@ def test_tensor_value_error() -> None:
         chunk_and_checkpoint(lambda x: x, x, chunk_size=1, batch_axis=2)
 
 
-def test_checkpoint_correctness() -> None:
+@pytest.mark.parametrize("chunk_size", [1, 2, 3, 4])
+@pytest.mark.parametrize("axis", [0, 1])
+def test_checkpoint_correctness(chunk_size: int, axis: int) -> None:
     # Set up MLP and argument.
     batch_size = 4
     n = 7
@@ -50,15 +52,12 @@ def test_checkpoint_correctness() -> None:
     mlp.zero_grad()
 
     # Compute value and gradients with operation reordering and checkpointing.
-    for chunk_size in [1, 2, 3, 4]:
-        for axis in [0, 1]:
-            y = chunk_and_checkpoint(
-                mlp, x, chunk_size=chunk_size, batch_axis=axis
-            ).sum()
-            y.backward()
-            y_fuse = y.detach().clone()
-            grads_fuse = [p.grad.detach().clone() for p in mlp.parameters()]
-            mlp.zero_grad()
-            assert torch.isclose(y_orig, y_fuse)
-            for g_orig, g_fuse in zip(grads_orig, grads_fuse):
-                assert torch.all(torch.isclose(g_orig, g_fuse))
+    y = chunk_and_checkpoint(mlp, x, chunk_size=chunk_size, batch_axis=axis).sum()
+    y.backward()
+    y_fuse = y.detach().clone()
+    grads_fuse = [p.grad.detach().clone() for p in mlp.parameters()]
+    mlp.zero_grad()
+
+    assert torch.isclose(y_orig, y_fuse)
+    for g_orig, g_fuse in zip(grads_orig, grads_fuse):
+        assert torch.all(torch.isclose(g_orig, g_fuse))
