@@ -1,13 +1,15 @@
-import torch
-import torch.nn as nn
 import pytest
-
+import torch
+from torch import nn
 from torch.utils.checkpoint import checkpoint
+
 from chunkcheck import chunk_and_checkpoint
 
 
 class MLP(torch.nn.Module):
-    def __init__(self, dim_in, dim_latent, dim_out):
+    """Basic MLP class for testing."""
+
+    def __init__(self, dim_in: int, dim_latent: int, dim_out: int) -> None:
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(dim_in, dim_latent),
@@ -15,31 +17,31 @@ class MLP(torch.nn.Module):
             nn.Linear(dim_latent, dim_out),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x)
 
 
-def test_tensor_value_error():
+def test_tensor_value_error() -> None:
     x = torch.randn(5, 4)
     y = torch.randn(4, 4)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="At least one positional"):
         chunk_and_checkpoint(lambda x: x, chunk_size=1)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError, match="Arguments must be torch"):
         chunk_and_checkpoint(lambda x, y: x + y, [], y, chunk_size=1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="same batch dim length"):
         chunk_and_checkpoint(lambda x: x, x, y, chunk_size=1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="requested batch axis"):
         chunk_and_checkpoint(lambda x: x, x, chunk_size=1, batch_axis=2)
 
 
-def test_checkpoint_correctness():
+def test_checkpoint_correctness() -> None:
     # Set up MLP and argument.
-    B = 4
-    N = 7
-    D = 4
-    Dout = 8
-    x = torch.randn(B, N, D, requires_grad=True)
-    mlp = MLP(D, 10, Dout)
+    batch_size = 4
+    n = 7
+    d = 4
+    d_out = 8
+    x = torch.randn(batch_size, n, d, requires_grad=True)
+    mlp = MLP(d, 10, d_out)
 
     # Compute value and gradients in the usual manner + store them.
     y = mlp(x).sum()

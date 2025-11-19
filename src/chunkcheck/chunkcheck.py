@@ -1,4 +1,4 @@
-from typing import Callable  # noqa: D100
+from typing import Callable
 
 import torch
 from torch.utils.checkpoint import checkpoint
@@ -23,14 +23,14 @@ def chunk_and_checkpoint(
     """
     # Check that there is at least one positional argument.
     if len(xs) == 0:
-        msg = "At least one position argument required."
+        msg = "At least one positional argument required."
         raise ValueError(msg)
 
     # Verify that xs are all tensors.
     for x in xs:
-        if x is not torch.Tensor:
+        if not isinstance(x, torch.Tensor):
             msg = "Arguments must be torch Tensors."
-            raise ValueError(msg)
+            raise TypeError(msg)
 
     # Check that the requested axis is available in all tensors.
     for x in xs:
