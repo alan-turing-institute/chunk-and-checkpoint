@@ -11,9 +11,9 @@ class MLP(torch.nn.Module):
     def __init__(self, dim_in: int, dim_latent: int, dim_out: int) -> None:
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(dim_in, dim_latent),
+            nn.Linear(dim_in, dim_latent, dtype=torch.float64),
             nn.ReLU(),
-            nn.Linear(dim_latent, dim_out),
+            nn.Linear(dim_latent, dim_out, dtype=torch.float64),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -43,7 +43,7 @@ def test_checkpoint_correctness(chunk_size: int, axis: int) -> None:
     n = 7
     d = 4
     d_out = 8
-    x = torch.randn(batch_size, n, d, requires_grad=True)
+    x = torch.randn(batch_size, n, d, requires_grad=True, dtype=torch.float64)
     mlp = MLP(d, 10, d_out)
 
     # Compute value and gradients in the usual manner + store them.
